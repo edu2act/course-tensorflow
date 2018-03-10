@@ -2,11 +2,19 @@ TensorBoard是Tensorflow自带的一个强大的可视化工具，也是一个we
 
 这里需要理解“可视化”的意义。“可视化”也叫做数据可视化。是关于数据之视觉表现形式的研究。这种数据的视觉表现形式被定义为一种以某种概要形式抽提出来的信息，包括相应信息单位的各种属性和变量。例如我们需要可视化算法运行的错误率，那么我们可以取算法每次训练的错误率，绘制成折线图或曲线图，来表达训练过程中错误率的变化。可视化的方法有很多种。但无论哪一种，均是对数据进行摘要(summary)与处理。
 
-通常使用TensorBoard有三个步骤，首先需要在需要可视化的相关部位添加可视化代码，即创建摘要、添加摘要；其次运行代码，可以生成了一个或多个事件文件；最后启动TensorBoard的Web服务器。完成以上三个步骤，就可以在浏览器中可视化结果，Web服务器将会分析这个事件文件中的内容，并在浏览器中将结果绘制出来。
+通常使用TensorBoard有三个步骤：
+
+* 首先需要在需要可视化的相关部位添加可视化代码，即创建摘要、添加摘要；
+* 其次运行代码，可以生成了一个或多个事件文件(event files)；
+* 最后启动TensorBoard的Web服务器。
+
+完成以上三个步骤，就可以在浏览器中可视化结果，Web服务器将会分析这个事件文件中的内容，并在浏览器中将结果绘制出来。
 
 如果我们已经拥有了一个事件文件，也可以直接利用TensorBoard查看这个事件文件中的摘要。
 
-##创建事件文件
+
+
+## 1. 创建事件文件
 
 在使用TensorBoard的第一个步骤中是添加可视化代码，即创建一个事件文件。创建事件文件需要使用`tf.summary.FileWriter()`。具体如下：
 
@@ -20,7 +28,7 @@ tf.summary.FileWriter(
   	filename_suffix=None)  # 事件文件的后缀名
 ```
 
-`tf.summary.FileWriter()`类提供了一个在指定目录创建了一个事件文件(event files)并向其中添加摘要和事件的机制。该类异步地更新文件内容，允许训练程序调用方法来直接从训练循环向文件添加数据，而不会减慢训练，即既可以**在训练的同时跟新事件文件以供TensorBoard实时可视化**。
+`tf.summary.FileWriter()`类提供了一个在指定目录创建了一个事件文件并向其中添加摘要和事件的机制。该类异步地更新文件内容，允许训练程序调用方法来直接从训练循环向文件添加数据，而不会减慢训练，即既可以**在训练的同时更新事件文件以供TensorBoard实时可视化**。
 
 例如：
 
@@ -35,7 +43,9 @@ writer.close()
 
 **注意**：由于这个`writer`没有做任何操作，所以这是一个空的事件文件。如果不写`filename_suffix='.file'`这个属性，那么默认不创建空的事件文件。这时候如果使用TensorBoard的web服务器运行这个事件文件，看不到可视化了什么，因为这是一个空的事件文件。
 
-##TensorBoard Web服务器
+
+
+## 2. TensorBoard Web服务器
 
 TensorBoard通过运行一个本地Web服务器，来监听6006端口。当浏览器发出请求时，分析训练时记录的数据，绘制训练过程中的图像。
 
@@ -58,9 +68,11 @@ tensorboard --logdir=./graphs
 
 然后打开浏览器，进入`localhost:6006`即可查看到可视化的结果。
 
-##可视化面板与操作详述
 
-在Tensorflow中，summary模块用于可视化相关操作。TensorBoard目前支持8中可视化，即SCALARS、IMAGES、AUDIO、GRAPHS、DISTRIBUTIONS、HISTOGRAMS、EMBEDDINGS、TEXT。这8中可视化的主要功能如下。
+
+## 3. 可视化面板与操作详述
+
+在Tensorflow中，summary模块用于可视化相关操作。TensorBoard目前内置8中可视化面板，即SCALARS、IMAGES、AUDIO、GRAPHS、DISTRIBUTIONS、HISTOGRAMS、EMBEDDINGS、TEXT。这8中可视化的主要功能如下。
 
 - SCALARS：展示算法训练过程中的参数、准确率、代价等的变化情况。
 - IMAGES：展示训练过程中记录的图像。
@@ -71,11 +83,15 @@ tensorboard --logdir=./graphs
 - EMBEDDINGS：展示词向量（如Word2Vec）的投影分布。
 - TEXT：
 
-### GRAPHS
+除此以外，TensorBoard还支持自定义可视化操作。可以参考[官方博客](https://developers.googleblog.cn/2017/09/tensorboard-api.html)。
+
+
+
+### 3.1 GRAPHS
 
 TensorBoard可以查看我们构建的数据流图，这对于复杂的模型的构建有很大的帮助。
 
-####创建graph摘要
+#### 创建graph摘要
 
 将数据流图可视化，需要将图传入summary的writer对象中。即在初始化`tf.summary.FileWriter()`时，给`graph`参数传入一个图。也可以在writer对象初始化之后使用`tf.add_graph()`给writer添加一个图。
 
@@ -92,7 +108,7 @@ with tf.Session() as sess:
     writer = tf.summary.FileWriter('./graphs', sess.graph)
     print(sess.run(x))
 
-writer.close()
+	writer.close()
 ~~~
 
 在TensorBoard的GRAPHS中显示如下：
@@ -149,7 +165,7 @@ with tf.Graph().as_default() as graph:
 with tf.Session() as sess:
     writer = tf.summary.FileWriter('./graphs')
     writer.add_graph(graph)
-writer.close()
+	writer.close()
 ~~~
 
 可视化之后如下：
@@ -160,7 +176,7 @@ writer.close()
 
 ![](./images/unconnected_series.png)
 
-####Connected Series
+#### Connected Series
 
 一系列的相连接的操作相同且name相同（不包括系统给加的后缀）节点可以组成一个有连接关系的节点组。
 
@@ -176,7 +192,7 @@ with tf.Graph().as_default() as graph:
 with tf.Session() as sess:
     writer = tf.summary.FileWriter('./graphs')
     writer.add_graph(graph)
-writer.close()
+	writer.close()
 ~~~
 
 可视化之后如下：
@@ -208,7 +224,7 @@ writer.close()
 
 
 
-####Control Dependency edge
+#### Control Dependency edge
 
 ~~~python
 with tf.Graph().as_default() as graph:
@@ -230,9 +246,9 @@ writer.close()
 
 在图可视化面板中，还有有多常用的功能，比如：切换不同的图；查看某次迭代时运行的内存、时间；标注节点使用的计算设备；导入别的图等。
 
-###SCALARS
+### 3.2 SCALARS
 
-SCALARS面板可以展示训练过程中某些纯量数据的变化情况，例如模型参数的跟新情况、模型的正确率等。
+SCALARS面板可以展示训练过程中某些标量数据的变化情况，例如模型参数的跟新情况、模型的正确率等。
 
 使用scalars面板，主要是使用`tf.summary.scalar()`函数对张量进行采样，并返回一个包含摘要的protobuf的类型为string的0阶张量，函数的用法如下：
 
@@ -242,17 +258,17 @@ SCALARS面板可以展示训练过程中某些纯量数据的变化情况，例�
 tf.summary.scalar(name, tensor, collections=None)
 ~~~
 
-`tf.summary.scalar()`可以提取纯量摘要，提取到的摘要需要添加到事件文件中，这时候可以使用`tf.summary.FileWriter.add_summary()`方法添加到事件文件中。`add_summary()`的用法如下：
+`tf.summary.scalar()`可以提取标量摘要，提取到的摘要需要添加到事件文件中，这时候可以使用`tf.summary.FileWriter.add_summary()`方法添加到事件文件中。`add_summary()`的用法如下：
 
 ~~~python
 add_summary(summary, global_step=None)
 ~~~
 
-第一个参数是protobuf的类型为string的0阶张量摘要，第二个参数是记录摘要值的步数。例如训练100次模型，每次取一个摘要，这时候第二个参数就是第n次，这样可以得到纯量随训练变化的情况。
+第一个参数是protobuf的类型为string的0阶张量摘要，第二个参数是记录摘要值的步数。例如训练100次模型，每次取一个摘要，这时候第二个参数就是第n次，这样可以得到标量随训练变化的情况。
 
 **注意**：`tf.summary.scalar()`获取到的并不是直接可以添加到事件文件中的数据，而是一个张量对象，必须在会话中执行了张量对象之后才能得到可以添加到事件文件中的数据。
 
-完整创建纯量摘要的代码如下：
+完整创建标量摘要的代码如下：
 
 ~~~python
 
@@ -277,7 +293,7 @@ with tf.Session(graph=graph) as sess:
         # summary_op的值写入事件文件
         writer.add_summary(summary, i)
        
-writer.close()
+	writer.close()
 ~~~
 
 上述代码执行之后，在SCALARS面板中显示如下：
@@ -288,9 +304,11 @@ writer.close()
 
 面板左侧可以调整右侧的显示内容。我们看到的右侧的线是一个曲线，然而我们得到应该是一个折线图，这是因为左侧设置了平滑度(Smoothing)。横坐标默认是步数(STEP)，也可以设置为按照相对值(RELATIVE)或按照时间顺序(WALL)显示。
 
-SCALARS面板也可以同时显示多个纯量的摘要。
+SCALARS面板也可以同时显示多个标量的摘要。
 
-###HISTOGRAMS
+
+
+### 3.3 HISTOGRAMS
 
 HISTOGRAMS面板显示的是柱状图，对于2维、3维等数据，使用柱状图可以更好的展示出其规律。例如
 
@@ -317,7 +335,9 @@ writer.close()
 
 ![](./images/histograms.png)
 
-### DISTRIBUTIONS
+
+
+### 3.4 DISTRIBUTIONS
 
 DISTRIBUTIONS面板与HISTOGRAMS面板相关联，当我们创建了柱状图摘要之后，在DISTRIBUTIONS面板也可以看到图像，上述HISTOGRAMS面板对应的在DISTRIBUTIONS面板中显示如下：
 
@@ -325,7 +345,9 @@ DISTRIBUTIONS面板与HISTOGRAMS面板相关联，当我们创建了柱状图摘
 
 DISTRIBUTIONS面板可以看做HISTOGRAMS面板的压缩后的图像。
 
-### IMAGES
+
+
+### 3.5 IMAGES
 
 IMAGES面板用来展示训练过程中的图像，例如我们需要对比原始图像与算法处理过的图像的差异时，我们可以使用IMAGES面板将其展示出来。
 
@@ -354,14 +376,16 @@ with tf.Session(graph=graph) as sess:
     summaries, _ = sess.run([image, var])
     writer.add_summary(summaries)
     
-writer.close()
+	writer.close()
 ~~~
 
 在IMAGES面板中显示如下：
 
 ![](./images/image.png)
 
-### AUDIO
+
+
+### 3.6 AUDIO
 
 AUDIO面板与IMAGES面板类似，只不过是将图像换成了音频。音频数据比图像数据少一个维度。创建AUDIO摘要的方法是：`tf.summary.audio()`，具体如下：
 
@@ -388,14 +412,16 @@ with tf.Session(graph=graph) as sess:
     summaries, _ = sess.run([audio, var])
     writer.add_summary(summaries)
     
-writer.close()
+	writer.close()
 ~~~
 
 在AUDIO面板中可以播放、下载采样的音频，显示效果如下：
 
 ![](./images/audio.png)
 
-###TEXT
+
+
+### 3.7 TEXT
 
 TEXT面板用来可视化多行字符串，使用`tf.summary.text()`方法进行。
 
@@ -429,7 +455,9 @@ writer.close()
 
 ![](./images/text.png)
 
-### EMBEDDINGS
+
+
+### 3.8 EMBEDDINGS
 
 EMBEDDINGS面板一般用来可视化词向量(word embedding)。在自然语言处理、推荐系统中较为常见。embeding的可视化与其它类型的可视化完全不同，需要用到tensorboard插件并配合检查点操作。具体教程我们在之后的内容中详述，这里，我们可以查看一下手写数字可视化后的效果：
 

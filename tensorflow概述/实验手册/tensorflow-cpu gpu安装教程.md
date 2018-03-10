@@ -179,7 +179,13 @@ GPU版本的安装首先需要安装英伟达的CUDA与CuDNN。然后才需要�
 sudo sh cuda_8.0.61_375.26_linux.run
 ~~~
 
-这时候会有一些选项需要您手动选择，这个**很重要。**否则可能会使系统出现问题！！！
+如果已经安装了显卡驱动，则不需要选择安装显卡驱动。一般建议这样做，cuda自带的驱动总会出一些问题。显卡驱动安装方法如下：
+
+~~~shell
+sudo apt-get install nvidia-xxx # xxx 根据自己的驱动来
+~~~
+
+如果你选择了安装显卡驱动，这时候会有一些选项需要您手动选择，这个**很重要。**否则可能会使系统出现问题！！！
 
 通常我们不需要安装OpenGL。
 
@@ -252,7 +258,7 @@ pip install tensorflow-gpu
 编译安装与上面提到cpu版本的编译安装差不多，只有第6步，使用bazel构建pip包的命令稍有差异，如下：
 
 ~~~shell
-bazel build -c -k opt --copt=-march=native --config=cuda //tensorflow/tools/pip_package:build_pip_package
+bazel build -c opt --copt=-march=native --config=cuda -k //tensorflow/tools/pip_package:build_pip_package
 ~~~
 
 编译安装之后，可以利用上面提到的验证方法验证安装是否成功。
