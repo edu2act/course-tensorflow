@@ -12,7 +12,7 @@ a = tf.add(3, 5)
 
 使用TensorBoard可视化图：
 
-<img src='./images/graph_add.png' width='300px'>
+<img src='../images/graph_add.png' width='300px'>
 
 此处的x、y是被TensorBoard自动命名的，分别代表3与5这两个量。这里需要注意的是数据流图含了**边（edge）**和**节点（node）**，正好与Tensorflow中的tensor与flow对应。tensor代表了数据流图中的边，而flow这个动作代表了数据流图中的节点。节点也被称之为**操作（operation, op）**，一个 op 获得 0 个或多个 `Tensor`, 执行计算, 产生 0 个或多个 `Tensor`。 每个 Tensor 是一个类型化的多维数组 。关于节点与边，我们会在后续的内容当中详细描述。
 
@@ -107,7 +107,7 @@ with tf.Session() as sess:
 
 利用TensorBoard可视化图，如下：
 
-<img src='./images/graph_more.png' width='450px'>
+<img src='../images/graph_more.png' width='450px'>
 
 虽然`session`中运行的是节点`op3`，然而与之相关联的`op1`、`op2`也参与了运算。
 
@@ -135,7 +135,7 @@ with tf.Session() as sess:
 
 利用TensorBoard可视化图：
 
-<img src='./images/sub_graph.png' width='450px'>
+<img src='../images/sub_graph.png' width='450px'>
 
 可以看到此图中有两个子图，即运行完整的图我们可以得到两个结果`useless`和`pow_op`。当我们执行上述代码时，相当于执行了一个子图`pow_op`。这里需要注意由于得到`pow_op`用不到`useless`的值，即没有依赖关系，所以`useless`这个node并没有执行，如果我们需要得到`useless`和`pow_op`两个节点的值，则需要稍微改进代码：
 

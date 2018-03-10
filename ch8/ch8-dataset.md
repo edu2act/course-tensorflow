@@ -90,7 +90,7 @@ filename_queue = tf.train.string_input_producer(['%d.csv' % i for i in range(1, 
 
 对于简单的、文件较少的数据集，使用上述方法生成文件名队列很合适。但面对大型的数据集，这样操作就不够灵活，例如中文语音语料库thchs30训练数据集的音频文件有一个目录A2中的文件如下：
 
-![](./images/thchs30-train-wav-v2.jpg)
+![](../images/thchs30-train-wav-v2.jpg)
 
 这个数据集目录中包含类了似于A2这样的目录就有几十个，每个目录中都有200个左右的文件。这些文件的名称都有一定的规律，例如A2目录下的文件的文件名开头都是'A2'，结尾都是'.wav'中间是不连续的1-n的自然数。我们无法使用列表推导`['A2_%d.wav' % i for i in range(n)]`（因为不连续）。
 
@@ -355,7 +355,7 @@ cuo
 2. 读取文件，生成样本队列。
 3. 从样本队列中生成批量样本。
 
-![](./images/AnimatedFileQueues.gif)
+![](../images/AnimatedFileQueues.gif)
 
 
 
