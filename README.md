@@ -1,6 +1,6 @@
 # TensorFlow基础教程
 
-基于TensorFlow 1.3版本的中文基础教程。适用于有Python基础者入门。
+基于TensorFlow 1.8版本的中文基础教程。适用于有Python基础者入门。
 
 **目录：**
 
@@ -12,6 +12,8 @@
 * 第六章 文件IO与模型存取
 * 第七章 队列与线程
 * 第八章 数据集文件操作
-* 第九章 TensorBoard基础用法
+* 第九章 模型存取
+* 第十章 Eager模式
+* 第十一章 TensorBoard基础用法
 
 
